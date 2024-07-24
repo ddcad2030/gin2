@@ -8,6 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func Hello(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "greeting",
+	})
+}
+
 func GetUser(c *gin.Context) {
 	users := []models.User{}
 	result := config.DB.Find(&users)

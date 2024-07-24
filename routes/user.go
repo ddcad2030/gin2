@@ -6,6 +6,8 @@ import (
 )
 
 func UserRoutes(r *gin.Engine) {
+	r.GET("/hello", controllers.Hello)
+
 	r.GET("/user", controllers.GetUser)
 	r.GET("/user/:id", controllers.GetUserByID)
 	r.POST("/user", controllers.CreateUser)

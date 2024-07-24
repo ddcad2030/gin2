@@ -1,4 +1,4 @@
 build:
-	@go build -o bin/gin main.go
+	@go build -o bin/app main.go
 run:
-	@./bin/gin
+	@./bin/app
