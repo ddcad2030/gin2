@@ -1,11 +1,14 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/ddcad2030/gin-gorm-rest/controllers"
+	"github.com/gin-gonic/gin"
+)
 
 func UserRoutes(r *gin.Engine) {
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	r.GET("/user", controllers.GetUser)
+	r.GET("/user/:id", controllers.GetUserByID)
+	r.POST("/user", controllers.CreateUser)
+	r.PUT("/user/:id", controllers.UpdateUser)
+	r.DELETE("/user/:id", controllers.DeleteUser)
 }
