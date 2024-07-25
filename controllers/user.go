@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/ddcad2030/gin-gorm-rest/config"
 	"github.com/ddcad2030/gin-gorm-rest/models"
+	"github.com/ddcad2030/gin-gorm-rest/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,10 +40,18 @@ func GetUserByID(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	users := models.User{}
 	c.BindJSON(&users)
+	hash, err := utils.GenerateToken(users.Email)
+	log.Println(hash, err)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	users.Password = string(hash)
 	result := config.DB.Create(&users)
 
 	if result.Error != nil {
-		c.JSON(http.StatusNotAcceptable, result.Error)
+		c.JSON(http.StatusInternalServerError, result.Error)
 		return
 	}
 	c.JSON(http.StatusCreated, &users)
@@ -89,4 +99,43 @@ func DeleteUser(c *gin.Context) {
 		"data": users,
 	})
 
+}
+
+func Login(c *gin.Context) {
+	var body struct {
+		Email    string
+		Password string
+	}
+	users := models.User{}
+	c.BindJSON(&body)
+
+	Findresult := config.DB.Where("email = ?", body.Email).First(&users)
+	if Findresult.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": Findresult.Error,
+		})
+		return
+	}
+
+	CheckHash := utils.CheckPasswordHash(body.Password, users.Password)
+
+	if !CheckHash {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Password not true",
+		})
+		return
+	}
+
+	token, err := utils.GenerateToken(users.Email)
+
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{
+			"error": "Invalid token",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+	})
 }

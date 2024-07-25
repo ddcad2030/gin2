@@ -31,6 +31,13 @@ func ConnectDB() {
 		os.Getenv("DB_CONTAINER_PORT"),
 	)
 
+	// dsn := fmt.Sprintf(
+	// 	"host=localhost user=%s password=%s dbname=%s port=9920",
+	// 	os.Getenv("DB_USER"),
+	// 	os.Getenv("DB_PASSWORD"),
+	// 	os.Getenv("DB_NAME"),
+	// )
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
