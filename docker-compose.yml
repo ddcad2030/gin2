@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: db_postgres
+    container_name: $DB_CONTAINER
     env_file: ./.env
     image: postgres:16
     restart: unless-stopped
@@ -18,20 +18,20 @@ services:
       retries: 60
     networks:
       - backend
-  # app:
-  #   container_name: app_golang
-  #   env_file: ./.env
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   build:
-  #     context: ./
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   ports:
-  #     - $GO_HOST_PORT:$GO_CONTAINER_PORT
-  #   networks:
-  #     - backend
+  app:
+    container_name: app_golang
+    env_file: ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - $GO_HOST_PORT:$GO_CONTAINER_PORT
+    networks:
+      - backend
 networks:
   backend:
 volumes:

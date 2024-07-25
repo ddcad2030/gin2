@@ -23,14 +23,13 @@ func LoadEnv() {
 func ConnectDB() {
 	LoadEnv()
 	dsn := fmt.Sprintf(
-		"host=localhost user=%s password=%s dbname=%s port=%s",
+		"host=%s user=%s password=%s dbname=%s port=%s",
+		os.Getenv("DB_CONTAINER"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
-		os.Getenv("DB_HOST_PORT"),
+		os.Getenv("DB_CONTAINER_PORT"),
 	)
-
-	// log.Println(dsn)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
